@@ -1,0 +1,6 @@
+@ogrenciden_ogrenciye_HostAddress = http://localhost:5181
+
+GET {{ogrenciden_ogrenciye_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
