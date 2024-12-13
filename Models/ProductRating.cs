@@ -9,8 +9,9 @@ namespace ogrenciden_ogrenciye.Models
 		[Key]
 		public int RatingId { get; set; }
 
-		public int UserId { get; set; } // foreign key -> User
-		public int ProductId { get; set; } // foreign key -> Product
+		public int UserId { get; set; } // Foreign key -> User
+		public int ProductId { get; set; } // Foreign key -> Product
+
 		public decimal RatingValue { get; set; }
 		public string Review { get; set; }
 		public DateTime Date { get; set; }

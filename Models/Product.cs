@@ -9,16 +9,29 @@ namespace ogrenciden_ogrenciye.Models
 		[Key]
 		public int ProductId { get; set; }
 
-		public int SellerId { get; set; } // foreign key -> User
-		public string Category { get; set; }
+		[Required]
 		public string Title { get; set; }
+
 		public string Description { get; set; }
+
+		[Required]
 		public decimal Price { get; set; }
-		public decimal AiSuggestedPrice { get; set; }
-		public DateTime CreatedAt { get; set; }
-		public string Status { get; set; }
+
+		public string ImagePath { get; set; } = "/images/default.jpg";
+
+		[Required]
+		public string Category { get; set; } // Kategori
+
+		
+		public int SellerId { get; set; } // Foreign key
 
 		[ForeignKey("SellerId")]
-		public User Seller { get; set; } // Navigation property for User
+		public User Seller { get; set; } // Navigation property
+
+		[Required]
+		[EmailAddress]
+		public string SellerEmail { get; set; } // Satıcı e-posta
+
+		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 	}
 }

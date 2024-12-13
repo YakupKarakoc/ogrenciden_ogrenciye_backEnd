@@ -24,11 +24,15 @@ namespace ogrenciden_ogrenciye.Migrations
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.CourseAd", b =>
                 {
-                    b.Property<int>("AdId")
+                    b.Property<int>("CourseAdId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseAdId"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -37,23 +41,24 @@ namespace ogrenciden_ogrenciye.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("PricePerHour")
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("SellerId")
                         .HasColumnType("int");
 
-                    b.HasKey("AdId");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasIndex("UserId");
+                    b.HasKey("CourseAdId");
+
+                    b.HasIndex("SellerId");
 
                     b.ToTable("CourseAds");
                 });
@@ -80,6 +85,8 @@ namespace ogrenciden_ogrenciye.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("FavoriteId");
+
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("UserId");
 
@@ -145,11 +152,16 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
+
                     b.HasKey("RatingId");
 
                     b.HasIndex("NoteId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("NoteRatings");
                 });
@@ -162,9 +174,6 @@ namespace ogrenciden_ogrenciye.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<decimal>("AiSuggestedPrice")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -176,15 +185,21 @@ namespace ogrenciden_ogrenciye.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("/images/default.jpg");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("SellerEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -305,22 +320,30 @@ namespace ogrenciden_ogrenciye.Migrations
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.CourseAd", b =>
                 {
-                    b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", "Seller")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.Favorite", b =>
                 {
+                    b.HasOne("ogrenciden_ogrenciye.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
 
                     b.Navigation("User");
                 });
@@ -328,7 +351,7 @@ namespace ogrenciden_ogrenciye.Migrations
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.Note", b =>
                 {
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "Uploader")
-                        .WithMany()
+                        .WithMany("Notes")
                         .HasForeignKey("UploaderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -339,7 +362,7 @@ namespace ogrenciden_ogrenciye.Migrations
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.NoteRating", b =>
                 {
                     b.HasOne("ogrenciden_ogrenciye.Models.Note", "Note")
-                        .WithMany()
+                        .WithMany("NoteRatings")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -347,8 +370,12 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", null)
+                        .WithMany("NoteRatings")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Note");
 
@@ -371,7 +398,7 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.HasOne("ogrenciden_ogrenciye.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
@@ -394,6 +421,18 @@ namespace ogrenciden_ogrenciye.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.Note", b =>
+                {
+                    b.Navigation("NoteRatings");
+                });
+
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.User", b =>
+                {
+                    b.Navigation("NoteRatings");
+
+                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

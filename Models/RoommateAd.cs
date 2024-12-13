@@ -9,11 +9,20 @@ namespace ogrenciden_ogrenciye.Models
 		[Key]
 		public int RoommateAdId { get; set; }
 
-		public int UserId { get; set; } // foreign key -> User
+		public int UserId { get; set; } // Foreign key -> User
+
+		[Required]
 		public string Location { get; set; }
+
+		[Required]
 		public decimal Rent { get; set; }
+
+		[Required]
 		public string Preferences { get; set; }
+
 		public DateTime CreatedAt { get; set; }
+
+		[Required]
 		public string Status { get; set; }
 
 		[ForeignKey("UserId")]

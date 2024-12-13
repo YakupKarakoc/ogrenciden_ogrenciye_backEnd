@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,7 +10,7 @@ namespace ogrenciden_ogrenciye.Models
 		[Key]
 		public int NoteId { get; set; }
 
-		public int UploaderId { get; set; } // foreign key -> User
+		public int UploaderId { get; set; } // Foreign key -> User
 		public string Subject { get; set; }
 		public string Content { get; set; }
 		public decimal Rating { get; set; }
@@ -18,5 +19,7 @@ namespace ogrenciden_ogrenciye.Models
 
 		[ForeignKey("UploaderId")]
 		public User Uploader { get; set; } // Navigation property for User
+
+		public ICollection<NoteRating> NoteRatings { get; set; } // Relationship with NoteRatings
 	}
 }

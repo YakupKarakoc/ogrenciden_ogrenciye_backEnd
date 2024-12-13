@@ -24,25 +24,27 @@ namespace ogrenciden_ogrenciye.Controllers
 			if (!ModelState.IsValid)
 				return BadRequest(new { success = false, message = "Geçersiz veri." });
 
-			// Yeni kullanıcı oluştur
+			// Kullanıcı var mı kontrol et
+			if (_context.Users.Any(u => u.Email == model.Email))
+				return BadRequest(new { success = false, message = "Bu e-posta zaten kullanılıyor." });
+
 			var user = new User
 			{
 				FirstName = model.FirstName,
 				LastName = model.LastName,
 				Email = model.Email,
-				PhoneNumber = model.PhoneNumber, // Telefon numarasını ekledik
-				Gender = model.Gender            // Cinsiyeti ekledik
+				PhoneNumber = model.PhoneNumber,
+				Gender = model.Gender
 			};
 
-			// Şifreyi hashleyin
+			// Şifreyi hashle
 			user.PasswordHash = _passwordHasher.HashPassword(user, model.Password);
 
 			_context.Users.Add(user);
 			_context.SaveChanges();
 
-			return Ok(new { success = true });
+			return Ok(new { success = true, message = "Kayıt başarıyla tamamlandı!" });
 		}
-
 
 		[HttpPost("login")]
 		public IActionResult Login([FromBody] LoginModel model)
@@ -54,12 +56,18 @@ namespace ogrenciden_ogrenciye.Controllers
 
 			if (user != null)
 			{
-				// Şifrenin doğruluğunu kontrol edin
 				var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
 
 				if (result == PasswordVerificationResult.Success)
 				{
-					return Ok(new { success = true, token = "fake-jwt-token" });
+					// Başarıyla giriş yaptı
+					return Ok(new
+					{
+						success = true,
+						token = "fake-jwt-token",
+						name = user.FirstName,
+						email = user.Email
+					});
 				}
 			}
 
@@ -86,6 +94,7 @@ namespace ogrenciden_ogrenciye.Controllers
 				}
 			});
 		}
+
 		[HttpPut("profile/update")]
 		public IActionResult UpdateUserProfile([FromBody] UpdateProfileModel model)
 		{
@@ -105,8 +114,5 @@ namespace ogrenciden_ogrenciye.Controllers
 			_context.SaveChanges();
 			return Ok(new { success = true, message = "Profil başarıyla güncellendi." });
 		}
-
-
-
 	}
 }

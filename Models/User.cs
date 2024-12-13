@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ogrenciden_ogrenciye.Models
 {
@@ -21,5 +22,8 @@ namespace ogrenciden_ogrenciye.Models
 
 		public string PhoneNumber { get; set; }
 		public string Gender { get; set; }
+
+		public ICollection<Note> Notes { get; set; }
+		public ICollection<NoteRating> NoteRatings { get; set; }
 	}
 }

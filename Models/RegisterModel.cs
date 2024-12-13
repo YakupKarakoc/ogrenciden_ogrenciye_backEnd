@@ -1,19 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class RegisterModel
+namespace ogrenciden_ogrenciye.Models
 {
-	[Required]
-	public string FirstName { get; set; }
+	public class RegisterModel
+	{
+		[Required]
+		public string FirstName { get; set; }
 
-	[Required]
-	public string LastName { get; set; }
+		[Required]
+		public string LastName { get; set; }
 
-	[Required, EmailAddress]
-	public string Email { get; set; }
+		[Required, EmailAddress]
+		public string Email { get; set; }
 
-	[Required]
-	public string Password { get; set; }
+		[Required]
+		[MinLength(6, ErrorMessage = "Şifre en az 6 karakter olmalıdır.")]
+		public string Password { get; set; }
 
-	public string PhoneNumber { get; set; } 
-	public string Gender { get; set; }     
+		public string PhoneNumber { get; set; }
+		public string Gender { get; set; }
+	}
 }
