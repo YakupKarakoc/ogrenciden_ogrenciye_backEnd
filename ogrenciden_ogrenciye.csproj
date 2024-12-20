@@ -71,6 +71,8 @@
     <Compile Remove="Migrations\20241216125751_messagesTable.Designer.cs" />
     <Compile Remove="Migrations\20241216130834_AddMessageTable.cs" />
     <Compile Remove="Migrations\20241216130834_AddMessageTable.Designer.cs" />
+    <Compile Remove="Migrations\20241220121124_NewTablesProject.cs" />
+    <Compile Remove="Migrations\20241220121124_NewTablesProject.Designer.cs" />
     <Compile Remove="Migrations\AppDbContextModelSnapshot.cs" />
   </ItemGroup>
 

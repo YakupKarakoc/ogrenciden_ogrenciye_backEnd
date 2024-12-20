@@ -12,15 +12,15 @@ using ogrenciden_ogrenciye.Models;
 namespace ogrenciden_ogrenciye.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241219164458_azadi")]
-    partial class azadi
+    [Migration("20241220121124_NewTablesProject")]
+    partial class NewTablesProject
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -249,34 +249,41 @@ namespace ogrenciden_ogrenciye.Migrations
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.RoommateAd", b =>
                 {
-                    b.Property<int>("RoommateAdId")
+                    b.Property<int>("AdId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoommateAdId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdId"));
+
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GenderPreference")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Preferences")
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Rent")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoommateAdId");
+                    b.HasKey("AdId");
 
                     b.HasIndex("UserId");
 
@@ -318,6 +325,54 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.UserSurvey", b =>
+                {
+                    b.Property<int>("SurveyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SurveyId"));
+
+                    b.Property<int>("Question1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question10")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question2")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question3")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question4")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question5")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question6")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question7")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question8")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Question9")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SurveyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSurveys");
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.CourseAd", b =>
@@ -415,6 +470,17 @@ namespace ogrenciden_ogrenciye.Migrations
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.RoommateAd", b =>
+                {
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.UserSurvey", b =>
                 {
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
                         .WithMany()

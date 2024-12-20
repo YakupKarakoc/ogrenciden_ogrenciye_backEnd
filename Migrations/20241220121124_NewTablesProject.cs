@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ogrenciden_ogrenciye.Migrations
 {
     /// <inheritdoc />
-    public partial class azadi : Migration
+    public partial class NewTablesProject : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -138,20 +138,50 @@ namespace ogrenciden_ogrenciye.Migrations
                 name: "RoommateAds",
                 columns: table => new
                 {
-                    RoommateAdId = table.Column<int>(type: "int", nullable: false)
+                    AdId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Preferences = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Budget = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    GenderPreference = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoommateAds", x => x.RoommateAdId);
+                    table.PrimaryKey("PK_RoommateAds", x => x.AdId);
                     table.ForeignKey(
                         name: "FK_RoommateAds_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSurveys",
+                columns: table => new
+                {
+                    SurveyId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Question1 = table.Column<int>(type: "int", nullable: false),
+                    Question2 = table.Column<int>(type: "int", nullable: false),
+                    Question3 = table.Column<int>(type: "int", nullable: false),
+                    Question4 = table.Column<int>(type: "int", nullable: false),
+                    Question5 = table.Column<int>(type: "int", nullable: false),
+                    Question6 = table.Column<int>(type: "int", nullable: false),
+                    Question7 = table.Column<int>(type: "int", nullable: false),
+                    Question8 = table.Column<int>(type: "int", nullable: false),
+                    Question9 = table.Column<int>(type: "int", nullable: false),
+                    Question10 = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSurveys", x => x.SurveyId);
+                    table.ForeignKey(
+                        name: "FK_UserSurveys_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -269,6 +299,11 @@ namespace ogrenciden_ogrenciye.Migrations
                 name: "IX_RoommateAds_UserId",
                 table: "RoommateAds",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSurveys_UserId",
+                table: "UserSurveys",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -288,6 +323,9 @@ namespace ogrenciden_ogrenciye.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoommateAds");
+
+            migrationBuilder.DropTable(
+                name: "UserSurveys");
 
             migrationBuilder.DropTable(
                 name: "Products");

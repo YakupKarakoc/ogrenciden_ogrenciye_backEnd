@@ -31,8 +31,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
-	
-	
 	app.UseSwaggerUI(options =>
 	{
 		options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
@@ -46,10 +44,9 @@ else
 	app.UseSwaggerUI(options =>
 	{
 		options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-		options.RoutePrefix = "swagger"; 
+		options.RoutePrefix = "swagger";
 	});
 }
-
 
 // Middleware'ler
 app.UseCors("AllowAllOrigins");
