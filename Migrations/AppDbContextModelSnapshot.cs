@@ -93,6 +93,36 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.ToTable("Favorites");
                 });
 
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.Note", b =>
                 {
                     b.Property<int>("NoteId")
@@ -105,15 +135,13 @@ namespace ogrenciden_ogrenciye.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Rating")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TrendStatus")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
@@ -121,9 +149,14 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Property<int>("UploaderId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("NoteId");
 
                     b.HasIndex("UploaderId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notes");
                 });
@@ -152,18 +185,13 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("RatingId");
 
                     b.HasIndex("NoteId");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("NoteRatings");
+                    b.ToTable("NoteRating");
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.Product", b =>
@@ -201,6 +229,10 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Property<int>("SellerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("SubCategory")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -210,39 +242,6 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.HasIndex("SellerId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("ogrenciden_ogrenciye.Models.ProductRating", b =>
-                {
-                    b.Property<int>("RatingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("RatingValue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Review")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RatingId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductRatings");
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.RoommateAd", b =>
@@ -348,13 +347,36 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.Message", b =>
+                {
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.Note", b =>
                 {
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "Uploader")
-                        .WithMany("Notes")
+                        .WithMany()
                         .HasForeignKey("UploaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", null)
+                        .WithMany("Notes")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Uploader");
                 });
@@ -368,14 +390,10 @@ namespace ogrenciden_ogrenciye.Migrations
                         .IsRequired();
 
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("ogrenciden_ogrenciye.Models.User", null)
                         .WithMany("NoteRatings")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Note");
 
@@ -387,29 +405,10 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.HasOne("ogrenciden_ogrenciye.Models.User", "Seller")
                         .WithMany()
                         .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Seller");
-                });
-
-            modelBuilder.Entity("ogrenciden_ogrenciye.Models.ProductRating", b =>
-                {
-                    b.HasOne("ogrenciden_ogrenciye.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.RoommateAd", b =>

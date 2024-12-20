@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ogrenciden_ogrenciye.Models
 {
@@ -10,16 +11,24 @@ namespace ogrenciden_ogrenciye.Models
 		[Key]
 		public int NoteId { get; set; }
 
+		[Required]
 		public int UploaderId { get; set; } // Foreign key -> User
-		public string Subject { get; set; }
-		public string Content { get; set; }
-		public decimal Rating { get; set; }
-		public DateTime UploadDate { get; set; }
-		public bool TrendStatus { get; set; }
+
+		[Required]
+		public string Subject { get; set; } // Ders Adı
+
+		[Required]
+		public string Content { get; set; } // Açıklama
+
+		public string FilePath { get; set; } // PDF dosyası yolu
+
+		public DateTime UploadDate { get; set; } = DateTime.UtcNow; // Yükleme tarihi
 
 		[ForeignKey("UploaderId")]
 		public User Uploader { get; set; } // Navigation property for User
 
-		public ICollection<NoteRating> NoteRatings { get; set; } // Relationship with NoteRatings
+		[InverseProperty("Note")]
+		[JsonIgnore]
+		public ICollection<NoteRating> NoteRatings { get; set; } // Navigation to NoteRating
 	}
 }

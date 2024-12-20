@@ -17,15 +17,18 @@ namespace ogrenciden_ogrenciye.Models
 		[Required]
 		public decimal Price { get; set; }
 
+	
+
+
 		public string ImagePath { get; set; } = "/images/default.jpg";
 
 		[Required]
 		public string Category { get; set; } // Kategori
 
-		
-		public int SellerId { get; set; } // Foreign key
+		public string SubCategory { get; set; } // Alt Kategori
 
-		[ForeignKey("SellerId")]
+		// Foreign key ve navigation property
+		public int SellerId { get; set; }
 		public User Seller { get; set; } // Navigation property
 
 		[Required]

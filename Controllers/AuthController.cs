@@ -66,6 +66,7 @@ namespace ogrenciden_ogrenciye.Controllers
 						success = true,
 						token = "fake-jwt-token",
 						name = user.FirstName,
+						userId = user.Id,
 						email = user.Email
 					});
 				}
@@ -111,8 +112,28 @@ namespace ogrenciden_ogrenciye.Controllers
 			if (!string.IsNullOrEmpty(model.NewPassword))
 				user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
 
-			_context.SaveChanges();
-			return Ok(new { success = true, message = "Profil başarıyla güncellendi." });
+			if (string.IsNullOrEmpty(model.PhoneNumber) && string.IsNullOrEmpty(model.NewPassword))
+			{
+				return BadRequest(new { success = false, message = "Güncelleme için telefon numarası veya şifre alanlarından en az birini doldurun!" });
+			}
+
+
+			try
+			{
+				if (!string.IsNullOrEmpty(model.PhoneNumber))
+					user.PhoneNumber = model.PhoneNumber;
+
+				if (!string.IsNullOrEmpty(model.NewPassword))
+					user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
+
+				_context.SaveChanges();
+				return Ok(new { success = true, message = "Profil başarıyla güncellendi." });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { success = false, message = "Bir hata oluştu. Lütfen tekrar deneyin.", error = ex.Message });
+			}
+
 		}
 	}
 }

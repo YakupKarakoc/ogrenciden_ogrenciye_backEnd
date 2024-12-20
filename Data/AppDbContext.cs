@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ogrenciden_ogrenciye.Models;
 
 namespace ogrenciden_ogrenciye.Models
 {
@@ -12,33 +13,48 @@ namespace ogrenciden_ogrenciye.Models
 		public DbSet<Favorite> Favorites { get; set; }
 		public DbSet<CourseAd> CourseAds { get; set; }
 		public DbSet<RoommateAd> RoommateAds { get; set; }
-		public DbSet<NoteRating> NoteRatings { get; set; }
-		public DbSet<ProductRating> ProductRatings { get; set; }
+		public DbSet<Message> Messages { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			// Kullanıcıların not puanlamaları (NoteRating) ilişkisi
+			// Note -> NoteRating ilişkisi
 			modelBuilder.Entity<NoteRating>()
-				.HasOne(nr => nr.User)
+				.HasOne(nr => nr.Note)
+				.WithMany(n => n.NoteRatings)
+				.HasForeignKey(nr => nr.NoteId)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			// Note -> User ilişkisi
+			modelBuilder.Entity<Note>()
+				.HasOne(n => n.Uploader)
 				.WithMany()
-				.HasForeignKey(nr => nr.UserId)
+				.HasForeignKey(n => n.UploaderId)
 				.OnDelete(DeleteBehavior.NoAction);
 
-			// Ürünlerin puanlamaları (ProductRating) ilişkisi
-			modelBuilder.Entity<ProductRating>()
-				.HasOne(pr => pr.Product)
+			// Product ilişkisi: Ürün ve satıcı ilişkisi
+			modelBuilder.Entity<Product>()
+				.HasOne(p => p.Seller)
 				.WithMany()
-				.HasForeignKey(pr => pr.ProductId)
+				.HasForeignKey(p => p.SellerId)
 				.OnDelete(DeleteBehavior.NoAction);
 
-			// Ürünlerin kullanıcılarla ilişkisi (örnek)
+			// Product varsayılan görsel
 			modelBuilder.Entity<Product>()
 				.Property(p => p.ImagePath)
-				.HasDefaultValue("/images/default.jpg"); // Varsayılan görsel yolu
+				.HasDefaultValue("/images/default.jpg");
 
-			base.OnModelCreating(modelBuilder);
+			// Message ilişkisi: Gönderen ve alıcı arasında bağlantı
+			modelBuilder.Entity<Message>()
+				.HasOne(m => m.Sender)
+				.WithMany()
+				.HasForeignKey(m => m.SenderId)
+				.OnDelete(DeleteBehavior.NoAction);
 
-
+			modelBuilder.Entity<Message>()
+				.HasOne(m => m.Receiver)
+				.WithMany()
+				.HasForeignKey(m => m.ReceiverId)
+				.OnDelete(DeleteBehavior.NoAction);
 		}
 	}
 }

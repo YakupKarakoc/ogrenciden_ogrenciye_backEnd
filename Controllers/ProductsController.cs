@@ -43,6 +43,7 @@ namespace ogrenciden_ogrenciye.Controllers
 					Description = productDto.Description,
 					Price = productDto.Price,
 					Category = productDto.Category,
+					SubCategory = productDto.SubCategory, // Yeni alan
 					SellerId = user.Id,
 					SellerEmail = user.Email,
 					CreatedAt = DateTime.UtcNow
@@ -207,6 +208,53 @@ namespace ogrenciden_ogrenciye.Controllers
 				}
 
 				return Ok(userAds);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Bir hata oluştu.", error = ex.Message });
+			}
+		}
+
+		[HttpGet("category/{category}/{subCategory?}")]
+		public IActionResult GetProductsByCategory(string category, string subCategory = null)
+		{
+			var query = _context.Products.Where(p => p.Category == category);
+
+			if (!string.IsNullOrEmpty(subCategory))
+				query = query.Where(p => p.SubCategory == subCategory);
+
+			var products = query.ToList();
+			return Ok(products);
+		}
+
+
+		// Search Endpoint
+		[HttpGet("Search")]
+		public IActionResult SearchProducts(string query)
+		{
+			try
+			{
+				var searchResults = _context.Products
+					.Where(p => p.Title.Contains(query) || p.Description.Contains(query))
+					.Select(p => new
+					{
+						p.ProductId,
+						p.Title,
+						p.Description,
+						p.Price,
+						p.Category,
+						p.ImagePath,
+						SellerName = p.Seller.FirstName + " " + p.Seller.LastName,
+						p.CreatedAt
+					})
+					.ToList();
+
+				if (!searchResults.Any())
+				{
+					return NotFound(new { message = "Aradığınız kritere uygun bir ürün bulunamadı." });
+				}
+
+				return Ok(searchResults);
 			}
 			catch (Exception ex)
 			{

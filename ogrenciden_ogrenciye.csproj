@@ -19,6 +19,59 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\ProductController.cs" />
+    <Compile Remove="Migrations\20241122200757_newProject.cs" />
+    <Compile Remove="Migrations\20241122200757_newProject.Designer.cs" />
+    <Compile Remove="Migrations\20241122205643_newProductTables.cs" />
+    <Compile Remove="Migrations\20241122205643_newProductTables.Designer.cs" />
+    <Compile Remove="Migrations\20241126160747_addProducts.cs" />
+    <Compile Remove="Migrations\20241126160747_addProducts.Designer.cs" />
+    <Compile Remove="Migrations\20241126162027_newProductTableNew.cs" />
+    <Compile Remove="Migrations\20241126162027_newProductTableNew.Designer.cs" />
+    <Compile Remove="Migrations\20241126162207_productsnewtables.cs" />
+    <Compile Remove="Migrations\20241126162207_productsnewtables.Designer.cs" />
+    <Compile Remove="Migrations\20241126172301_newnewnewProduct.cs" />
+    <Compile Remove="Migrations\20241126172301_newnewnewProduct.Designer.cs" />
+    <Compile Remove="Migrations\20241126190820_yirmialtikasim.cs" />
+    <Compile Remove="Migrations\20241126190820_yirmialtikasim.Designer.cs" />
+    <Compile Remove="Migrations\20241206150613_updateFavorites.cs" />
+    <Compile Remove="Migrations\20241206150613_updateFavorites.Designer.cs" />
+    <Compile Remove="Migrations\20241206164842_updateProductFavorites.cs" />
+    <Compile Remove="Migrations\20241206164842_updateProductFavorites.Designer.cs" />
+    <Compile Remove="Migrations\20241206175150_updateFavoritess.cs" />
+    <Compile Remove="Migrations\20241206175150_updateFavoritess.Designer.cs" />
+    <Compile Remove="Migrations\20241208182758_AddSellerIdToProducts.cs" />
+    <Compile Remove="Migrations\20241208182758_AddSellerIdToProducts.Designer.cs" />
+    <Compile Remove="Migrations\20241208202350_addSellerIdd.cs" />
+    <Compile Remove="Migrations\20241208202350_addSellerIdd.Designer.cs" />
+    <Compile Remove="Migrations\20241208211808_newProductClass.cs" />
+    <Compile Remove="Migrations\20241208211808_newProductClass.Designer.cs" />
+    <Compile Remove="Migrations\20241208212801_newnewProduct.cs" />
+    <Compile Remove="Migrations\20241208212801_newnewProduct.Designer.cs" />
+    <Compile Remove="Migrations\20241208213935_makeSeller.cs" />
+    <Compile Remove="Migrations\20241208213935_makeSeller.Designer.cs" />
+    <Compile Remove="Migrations\20241208214726_endProduct.cs" />
+    <Compile Remove="Migrations\20241208214726_endProduct.Designer.cs" />
+    <Compile Remove="Migrations\20241209130123_addProductCategory.cs" />
+    <Compile Remove="Migrations\20241209130123_addProductCategory.Designer.cs" />
+    <Compile Remove="Migrations\20241209183045_productNewToProduct.cs" />
+    <Compile Remove="Migrations\20241209183045_productNewToProduct.Designer.cs" />
+    <Compile Remove="Migrations\20241209202527_newnewnew912.cs" />
+    <Compile Remove="Migrations\20241209202527_newnewnew912.Designer.cs" />
+    <Compile Remove="Migrations\20241209205155_dokuzoniki.cs" />
+    <Compile Remove="Migrations\20241209205155_dokuzoniki.Designer.cs" />
+    <Compile Remove="Migrations\20241209213659_ononononiki.cs" />
+    <Compile Remove="Migrations\20241209213659_ononononiki.Designer.cs" />
+    <Compile Remove="Migrations\20241209215019_ononikii.cs" />
+    <Compile Remove="Migrations\20241209215019_ononikii.Designer.cs" />
+    <Compile Remove="Migrations\20241215210239_updateProfilenew.cs" />
+    <Compile Remove="Migrations\20241215210239_updateProfilenew.Designer.cs" />
+    <Compile Remove="Migrations\20241216124853_newMessages.cs" />
+    <Compile Remove="Migrations\20241216124853_newMessages.Designer.cs" />
+    <Compile Remove="Migrations\20241216125751_messagesTable.cs" />
+    <Compile Remove="Migrations\20241216125751_messagesTable.Designer.cs" />
+    <Compile Remove="Migrations\20241216130834_AddMessageTable.cs" />
+    <Compile Remove="Migrations\20241216130834_AddMessageTable.Designer.cs" />
+    <Compile Remove="Migrations\AppDbContextModelSnapshot.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,21 +79,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="NewFolder2\" />
+    <Folder Include="wwwroot\notes\" />
   </ItemGroup>
 
 </Project>
