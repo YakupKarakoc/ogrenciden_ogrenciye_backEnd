@@ -16,15 +16,15 @@ namespace ogrenciden_ogrenciye.Controllers
 		}
 
 		[HttpGet("{userId}")]
-		public IActionResult GetSurvey(int userId)
+		public IActionResult GetUserSurvey(int userId)
 		{
-			var survey = _context.UserSurveys.FirstOrDefault(s => s.UserId == userId);
-			if (survey == null)
+			var userSurvey = _context.UserSurveys.FirstOrDefault(us => us.UserId == userId);
+
+			if (userSurvey == null)
 			{
-				// Eğer kullanıcıya ait bir anket yoksa, default değerlerle yeni bir kayıt oluştur
-				survey = new UserSurvey
+				// Varsayılan değerleri döndür
+				return Ok(new
 				{
-					UserId = userId,
 					Question1 = 3,
 					Question2 = 3,
 					Question3 = 3,
@@ -35,13 +35,12 @@ namespace ogrenciden_ogrenciye.Controllers
 					Question8 = 3,
 					Question9 = 3,
 					Question10 = 3
-				};
-				_context.UserSurveys.Add(survey);
-				_context.SaveChanges();
+				});
 			}
 
-			return Ok(survey);
+			return Ok(userSurvey);
 		}
+
 
 
 		[HttpPost("submit")]

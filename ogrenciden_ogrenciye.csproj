@@ -9,12 +9,16 @@
   <ItemGroup>
     <Compile Remove="NewFolder1\**" />
     <Compile Remove="NewFolder3\**" />
+    <Compile Remove="wwwroot\images\NewFolder1\**" />
     <Content Remove="NewFolder1\**" />
     <Content Remove="NewFolder3\**" />
+    <Content Remove="wwwroot\images\NewFolder1\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
     <EmbeddedResource Remove="NewFolder3\**" />
+    <EmbeddedResource Remove="wwwroot\images\NewFolder1\**" />
     <None Remove="NewFolder1\**" />
     <None Remove="NewFolder3\**" />
+    <None Remove="wwwroot\images\NewFolder1\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -98,6 +102,7 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="NewFolder2\" />
+    <Folder Include="wwwroot\images\roomMate\" />
     <Folder Include="wwwroot\notes\" />
   </ItemGroup>
 

@@ -3,8 +3,8 @@
 	public class FavoriteDto
 	{
 		public string UserEmail { get; set; }
-		public int ItemId { get; set; }
-		public string ItemType { get; set; }
+		public int ProductId { get; set; }
+
 	}
 
 

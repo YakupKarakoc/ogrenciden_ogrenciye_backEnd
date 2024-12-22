@@ -5,11 +5,11 @@ using ogrenciden_ogrenciye.Models;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FavoritesController : ControllerBase
+public class ProductFavoriteController : ControllerBase
 {
 	private readonly AppDbContext _context;
 
-	public FavoritesController(AppDbContext context)
+	public ProductFavoriteController(AppDbContext context)
 	{
 		_context = context;
 	}
@@ -28,30 +28,23 @@ public class FavoritesController : ControllerBase
 			return NotFound("User not found.");
 		}
 
-		var favorites = _context.Favorites
-		.Include(f => f.Product)
-		.ThenInclude(p => p.Seller) // Seller bilgilerini dahil et
-		.Where(f => f.UserId == user.Id)
-		.Select(f => new
-		{
-			f.FavoriteId,
-			f.AddedDate,
-			Product = new
+		var favorites = _context.ProductFavorites
+			.Include(f => f.Product)
+			.Where(f => f.UserId == user.Id)
+			.Select(f => new
 			{
-				f.Product.ProductId,
-				f.Product.Title,
-				f.Product.Description,
-				f.Product.Price,
-				f.Product.ImagePath,
-				SellerName = f.Product.Seller != null
-					? f.Product.Seller.FirstName + " " + f.Product.Seller.LastName
-					: "Bilinmeyen Satıcı" // Satıcı bilgisi eksikse
-			}
-		})
-		.ToList();
-
-
-
+				f.FavoriteId,
+				f.AddedDate,
+				Product = new
+				{
+					f.Product.ProductId,
+					f.Product.Title,
+					f.Product.Description,
+					f.Product.Price,
+					f.Product.ImagePath
+				}
+			})
+			.ToList();
 
 		return Ok(favorites);
 	}
@@ -59,7 +52,7 @@ public class FavoritesController : ControllerBase
 	[HttpPost]
 	public IActionResult AddFavorite([FromBody] FavoriteDto favoriteDto)
 	{
-		if (favoriteDto == null || string.IsNullOrEmpty(favoriteDto.UserEmail) || favoriteDto.ItemId == 0)
+		if (favoriteDto == null || string.IsNullOrEmpty(favoriteDto.UserEmail) || favoriteDto.ProductId == 0)
 		{
 			return BadRequest("Invalid favorite data.");
 		}
@@ -70,21 +63,21 @@ public class FavoritesController : ControllerBase
 			return NotFound("User not found.");
 		}
 
-		var favorite = new Favorite
+		var favorite = new ProductFavorite
 		{
 			UserId = user.Id,
-			ItemId = favoriteDto.ItemId,
-			ItemType = favoriteDto.ItemType,
+			ProductId = favoriteDto.ProductId,
 			AddedDate = DateTime.UtcNow
 		};
-		_context.Favorites.Add(favorite);
+
+		_context.ProductFavorites.Add(favorite);
 		_context.SaveChanges();
 
 		return CreatedAtAction(nameof(GetFavorites), new { userEmail = favoriteDto.UserEmail }, favorite);
 	}
 
-	[HttpDelete("{userEmail}/{itemId}")]
-	public IActionResult RemoveFavorite(string userEmail, int itemId)
+	[HttpDelete("{userEmail}/{productId}")]
+	public IActionResult RemoveFavorite(string userEmail, int productId)
 	{
 		var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
 		if (user == null)
@@ -92,15 +85,15 @@ public class FavoritesController : ControllerBase
 			return NotFound("User not found.");
 		}
 
-		var favorite = _context.Favorites
-			.FirstOrDefault(f => f.UserId == user.Id && f.ItemId == itemId);
+		var favorite = _context.ProductFavorites
+			.FirstOrDefault(f => f.UserId == user.Id && f.ProductId == productId);
 
 		if (favorite == null)
 		{
 			return NotFound("Favorite not found.");
 		}
 
-		_context.Favorites.Remove(favorite);
+		_context.ProductFavorites.Remove(favorite);
 		_context.SaveChanges();
 		return Ok("Favorite removed successfully.");
 	}
