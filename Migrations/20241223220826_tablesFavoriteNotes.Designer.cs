@@ -12,8 +12,8 @@ using ogrenciden_ogrenciye.Models;
 namespace ogrenciden_ogrenciye.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241221192750_updateRoomMate")]
-    partial class updateRoomMate
+    [Migration("20241223220826_tablesFavoriteNotes")]
+    partial class tablesFavoriteNotes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,29 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.ToTable("Notes");
                 });
 
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.NoteFavorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("NoteFavorites");
+                });
+
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.NoteRating", b =>
                 {
                     b.Property<int>("RatingId")
@@ -180,18 +203,13 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("RatingId");
 
                     b.HasIndex("NoteId");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("NoteRating");
+                    b.ToTable("NoteRatings");
                 });
 
             modelBuilder.Entity("ogrenciden_ogrenciye.Models.Product", b =>
@@ -508,10 +526,10 @@ namespace ogrenciden_ogrenciye.Migrations
                     b.Navigation("Uploader");
                 });
 
-            modelBuilder.Entity("ogrenciden_ogrenciye.Models.NoteRating", b =>
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.NoteFavorite", b =>
                 {
                     b.HasOne("ogrenciden_ogrenciye.Models.Note", "Note")
-                        .WithMany("NoteRatings")
+                        .WithMany()
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -522,9 +540,24 @@ namespace ogrenciden_ogrenciye.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ogrenciden_ogrenciye.Models.User", null)
+                    b.Navigation("Note");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ogrenciden_ogrenciye.Models.NoteRating", b =>
+                {
+                    b.HasOne("ogrenciden_ogrenciye.Models.Note", "Note")
                         .WithMany("NoteRatings")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ogrenciden_ogrenciye.Models.User", "User")
+                        .WithMany("NoteRatings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Note");
 

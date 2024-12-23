@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ogrenciden_ogrenciye.Migrations
 {
     /// <inheritdoc />
-    public partial class updateRoomMate : Migration
+    public partial class tablesFavoriteNotes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -212,7 +212,32 @@ namespace ogrenciden_ogrenciye.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NoteRating",
+                name: "NoteFavorites",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    NoteId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteFavorites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NoteFavorites_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
+                        principalColumn: "NoteId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NoteFavorites_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NoteRatings",
                 columns: table => new
                 {
                     RatingId = table.Column<int>(type: "int", nullable: false)
@@ -221,26 +246,20 @@ namespace ogrenciden_ogrenciye.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     RatingValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Review = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId1 = table.Column<int>(type: "int", nullable: true)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NoteRating", x => x.RatingId);
+                    table.PrimaryKey("PK_NoteRatings", x => x.RatingId);
                     table.ForeignKey(
-                        name: "FK_NoteRating_Notes_NoteId",
+                        name: "FK_NoteRatings_Notes_NoteId",
                         column: x => x.NoteId,
                         principalTable: "Notes",
                         principalColumn: "NoteId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_NoteRating_Users_UserId",
+                        name: "FK_NoteRatings_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_NoteRating_Users_UserId1",
-                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -313,19 +332,24 @@ namespace ogrenciden_ogrenciye.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteRating_NoteId",
-                table: "NoteRating",
+                name: "IX_NoteFavorites_NoteId",
+                table: "NoteFavorites",
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteRating_UserId",
-                table: "NoteRating",
+                name: "IX_NoteFavorites_UserId",
+                table: "NoteFavorites",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteRating_UserId1",
-                table: "NoteRating",
-                column: "UserId1");
+                name: "IX_NoteRatings_NoteId",
+                table: "NoteRatings",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NoteRatings_UserId",
+                table: "NoteRatings",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notes_UploaderId",
@@ -383,7 +407,10 @@ namespace ogrenciden_ogrenciye.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "NoteRating");
+                name: "NoteFavorites");
+
+            migrationBuilder.DropTable(
+                name: "NoteRatings");
 
             migrationBuilder.DropTable(
                 name: "ProductFavorites");
