@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ogrenciden_ogrenciye.Dtos;
 using ogrenciden_ogrenciye.Models;
 using System;
@@ -29,27 +30,24 @@ namespace ogrenciden_ogrenciye.Controllers
 					return BadRequest(new { message = "Satıcı e-posta adresi gerekli." });
 				}
 
-				// Satıcıyı veritabanında bul
 				var user = _context.Users.FirstOrDefault(u => u.Email == productDto.SellerEmail);
 				if (user == null)
 				{
 					return BadRequest(new { message = "Satıcı bulunamadı." });
 				}
 
-				// Yeni Product nesnesi oluştur ve DTO'dan değerleri ata
 				var product = new Product
 				{
 					Title = productDto.Title,
 					Description = productDto.Description,
 					Price = productDto.Price,
 					Category = productDto.Category,
-					SubCategory = productDto.SubCategory, // Yeni alan
+					SubCategory = productDto.SubCategory,
 					SellerId = user.Id,
 					SellerEmail = user.Email,
 					CreatedAt = DateTime.UtcNow
 				};
 
-				// Görsel işleme
 				if (productDto.Image != null)
 				{
 					var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
@@ -81,7 +79,6 @@ namespace ogrenciden_ogrenciye.Controllers
 					product.ImagePath = "/images/default.jpg";
 				}
 
-				// Veritabanına kaydet
 				_context.Products.Add(product);
 				await _context.SaveChangesAsync();
 
@@ -94,8 +91,6 @@ namespace ogrenciden_ogrenciye.Controllers
 			}
 		}
 
-
-		// Tüm Ürünleri Listeleme
 		[HttpGet]
 		public IActionResult GetAllProducts()
 		{
@@ -123,7 +118,6 @@ namespace ogrenciden_ogrenciye.Controllers
 			}
 		}
 
-		// Belirli Bir Ürünü Getirme
 		[HttpGet("{id}")]
 		public IActionResult GetProductById(int id)
 		{
@@ -157,7 +151,6 @@ namespace ogrenciden_ogrenciye.Controllers
 			}
 		}
 
-		// Ürün Silme
 		[HttpDelete("{id}")]
 		public IActionResult DeleteProduct(int id)
 		{
@@ -180,11 +173,9 @@ namespace ogrenciden_ogrenciye.Controllers
 			}
 		}
 
-
 		[HttpGet("MyAds")]
 		public IActionResult GetUserAds(string sellerEmail)
 		{
-			Console.WriteLine($"Gelen sellerEmail: {sellerEmail}"); // Gelen parametreyi kontrol edin
 			try
 			{
 				var userAds = _context.Products
@@ -202,7 +193,7 @@ namespace ogrenciden_ogrenciye.Controllers
 					})
 					.ToList();
 
-				if (userAds.Count == 0)
+				if (!userAds.Any())
 				{
 					return NotFound(new { message = "Henüz bir ilan verilmedi." });
 				}
@@ -216,26 +207,26 @@ namespace ogrenciden_ogrenciye.Controllers
 		}
 
 		[HttpGet("category/{category}/{subCategory?}")]
-		public IActionResult GetProductsByCategory(string category, string subCategory = null)
-		{
-			var query = _context.Products.Where(p => p.Category == category);
-
-			if (!string.IsNullOrEmpty(subCategory))
-				query = query.Where(p => p.SubCategory == subCategory);
-
-			var products = query.ToList();
-			return Ok(products);
-		}
-
-
-		// Search Endpoint
-		[HttpGet("Search")]
-		public IActionResult SearchProducts(string query)
+		public IActionResult GetProductsByCategory(string category, string subCategory = null, int page = 1, int pageSize = 10)
 		{
 			try
 			{
-				var searchResults = _context.Products
-					.Where(p => p.Title.Contains(query) || p.Description.Contains(query))
+				var query = _context.Products.AsQueryable();
+
+				// Kategoriye göre filtreleme
+				query = query.Where(p => EF.Functions.Like(p.Category, $"%{category}%"));
+
+				// Alt kategoriye göre filtreleme
+				if (!string.IsNullOrEmpty(subCategory))
+				{
+					query = query.Where(p => EF.Functions.Like(p.SubCategory, $"%{subCategory}%"));
+				}
+
+				// Sıralama ve sayfalama
+				var products = query
+					.OrderByDescending(p => p.CreatedAt)
+					.Skip((page - 1) * pageSize)
+					.Take(pageSize)
 					.Select(p => new
 					{
 						p.ProductId,
@@ -243,6 +234,50 @@ namespace ogrenciden_ogrenciye.Controllers
 						p.Description,
 						p.Price,
 						p.Category,
+						p.SubCategory,
+						p.ImagePath,
+						SellerName = p.Seller.FirstName + " " + p.Seller.LastName,
+						p.CreatedAt
+					})
+					.ToList();
+
+				if (!products.Any())
+				{
+					return NotFound(new { message = "Bu kategoride ürün bulunamadı." });
+				}
+
+				return Ok(products);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Bir hata oluştu.", error = ex.Message });
+			}
+		}
+
+		[HttpGet("Search")]
+		public IActionResult SearchProducts(string query)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(query))
+				{
+					return BadRequest(new { message = "Arama sorgusu boş olamaz." });
+				}
+
+				// Arama kriterlerini kontrol et
+				var searchResults = _context.Products
+					.Where(p => EF.Functions.Like(p.Title, $"%{query}%") ||
+								EF.Functions.Like(p.Description, $"%{query}%") ||
+								EF.Functions.Like(p.Category, $"%{query}%") ||
+								EF.Functions.Like(p.SubCategory, $"%{query}%"))
+					.Select(p => new
+					{
+						p.ProductId,
+						p.Title,
+						p.Description,
+						p.Price,
+						p.Category,
+						p.SubCategory,
 						p.ImagePath,
 						SellerName = p.Seller.FirstName + " " + p.Seller.LastName,
 						p.CreatedAt

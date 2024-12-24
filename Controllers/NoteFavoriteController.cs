@@ -56,6 +56,40 @@ namespace ogrenciden_ogrenciye.Controllers
 			return Ok(favorites);
 		}
 
+		[HttpGet("search/{userId}")]
+		public async Task<IActionResult> SearchUserFavorites(int userId, [FromQuery] string query)
+		{
+			if (string.IsNullOrWhiteSpace(query))
+			{
+				return BadRequest("Arama sorgusu boş olamaz.");
+			}
+
+			var favorites = await _context.NoteFavorites
+				.Include(nf => nf.Note)
+				.ThenInclude(note => note.Uploader)
+				.Where(nf => nf.UserId == userId &&
+							 (EF.Functions.Like(nf.Note.Subject, $"%{query}%") ||
+							  EF.Functions.Like(nf.Note.Content, $"%{query}%")))
+				.Select(nf => new NoteFavoriteDTO
+				{
+					NoteId = nf.NoteId,
+					UserId = nf.UserId,
+					Subject = nf.Note.Subject,
+					Content = nf.Note.Content,
+					FilePath = nf.Note.FilePath,
+					UploaderName = $"{nf.Note.Uploader.FirstName} {nf.Note.Uploader.LastName}"
+				})
+				.ToListAsync();
+
+			if (!favorites.Any())
+			{
+				return NotFound("Arama kriterine uygun favori not bulunamadı.");
+			}
+
+			return Ok(favorites);
+		}
+
+
 
 
 
