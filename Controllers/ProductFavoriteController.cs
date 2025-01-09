@@ -15,7 +15,7 @@ public class ProductFavoriteController : ControllerBase
 	}
 
 	[HttpGet]
-	public IActionResult GetFavorites([FromQuery] string userEmail)
+	public IActionResult GetFavorites([FromQuery] string userEmail, [FromQuery] string query = "")
 	{
 		if (string.IsNullOrEmpty(userEmail))
 		{
@@ -30,7 +30,8 @@ public class ProductFavoriteController : ControllerBase
 
 		var favorites = _context.ProductFavorites
 			.Include(f => f.Product)
-			.Where(f => f.UserId == user.Id)
+			.Where(f => f.UserId == user.Id &&
+						(string.IsNullOrEmpty(query) || f.Product.Title.Contains(query)))
 			.Select(f => new
 			{
 				f.FavoriteId,
@@ -48,6 +49,7 @@ public class ProductFavoriteController : ControllerBase
 
 		return Ok(favorites);
 	}
+
 
 	[HttpPost]
 	public IActionResult AddFavorite([FromBody] FavoriteDto favoriteDto)

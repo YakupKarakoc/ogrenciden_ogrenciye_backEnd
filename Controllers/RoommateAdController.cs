@@ -140,17 +140,41 @@ namespace ogrenciden_ogrenciye.Controllers
 			return Ok(recommendedAds);
 		}
 
-
 		[HttpGet]
 		[Route("{id}")]
 		public IActionResult GetAdById(int id)
 		{
-			var ad = _context.RoommateAds.Include(r => r.User).FirstOrDefault(r => r.AdId == id);
+			// RoommateAds tablosundan `User` ile ilişkilendirilmiş ilanı çekiyoruz.
+			var ad = _context.RoommateAds
+				.Include(r => r.User) // Kullanıcı bilgilerini dahil ediyoruz.
+				.Where(r => r.AdId == id)
+				.Select(r => new
+				{
+					r.AdId,
+					r.Title,
+					r.Description,
+					r.City,
+					r.District,
+					r.SquareMeters,
+					r.RoomCount,
+					r.RentPrice,
+					r.GenderPreference,
+					r.ImagePath,
+					r.CreatedAt,
+					UploaderName = r.User.FirstName + " " + r.User.LastName, // Kullanıcı adı ve soyadı
+					UploaderPhone = r.User.PhoneNumber // Kullanıcının iletişim numarası
+				})
+				.FirstOrDefault();
+
 			if (ad == null)
 				return NotFound(new { success = false, message = "İlan bulunamadı." });
 
 			return Ok(ad);
 		}
+
+
+
+
 
 		[HttpDelete]
 		[Route("{id}")]

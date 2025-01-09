@@ -124,6 +124,7 @@ namespace ogrenciden_ogrenciye.Controllers
 			try
 			{
 				var product = _context.Products
+					.Include(p => p.Seller) // Seller ilişkisini dahil ediyoruz
 					.Where(p => p.ProductId == id)
 					.Select(p => new
 					{
@@ -134,6 +135,7 @@ namespace ogrenciden_ogrenciye.Controllers
 						p.Category,
 						p.ImagePath,
 						SellerName = p.Seller.FirstName + " " + p.Seller.LastName,
+						SellerPhone = p.Seller.PhoneNumber, // Telefon numarası ekleniyor
 						p.CreatedAt
 					})
 					.FirstOrDefault();
@@ -150,6 +152,7 @@ namespace ogrenciden_ogrenciye.Controllers
 				return StatusCode(500, new { message = "Bir hata oluştu.", error = ex.Message });
 			}
 		}
+
 
 		[HttpDelete("{id}")]
 		public IActionResult DeleteProduct(int id)

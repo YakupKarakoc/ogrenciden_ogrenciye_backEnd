@@ -22,7 +22,7 @@ namespace ogrenciden_ogrenciye.Controllers
 
 			if (userSurvey == null)
 			{
-				// Varsayılan değerleri döndür
+				// Eğer kullanıcı daha önce cevap vermemişse varsayılan değerleri döndür
 				return Ok(new
 				{
 					Question1 = 3,
@@ -34,11 +34,26 @@ namespace ogrenciden_ogrenciye.Controllers
 					Question7 = 3,
 					Question8 = 3,
 					Question9 = 3,
-					Question10 = 3
+					Question10 = 3,
+					IsNew = true // Bu kullanıcının yeni olduğunu belirtmek için bir flag ekleyelim
 				});
 			}
 
-			return Ok(userSurvey);
+			// Eğer kullanıcı daha önce cevap verdiyse mevcut cevapları döndür
+			return Ok(new
+			{
+				userSurvey.Question1,
+				userSurvey.Question2,
+				userSurvey.Question3,
+				userSurvey.Question4,
+				userSurvey.Question5,
+				userSurvey.Question6,
+				userSurvey.Question7,
+				userSurvey.Question8,
+				userSurvey.Question9,
+				userSurvey.Question10,
+				IsNew = false // Kullanıcı daha önce cevap vermiş
+			});
 		}
 
 
