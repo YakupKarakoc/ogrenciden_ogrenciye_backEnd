@@ -257,6 +257,8 @@ namespace ogrenciden_ogrenciye.Controllers
 			}
 		}
 
+
+
 		[HttpGet("Search")]
 		public IActionResult SearchProducts(string query)
 		{
